@@ -3,69 +3,66 @@ let playerScore = 0;
 let computerScore = 0;
 
 function getComputerSelection() {
-    const randomNum = Math.floor(Math.random() * 3);
+    const choices = ["rock", "paper", "scissors"];
 
-    if (randomNum == 0) {
-        return "Rock";
-    }
-    else if (randomNum == 1) {
-        return "Paper";
-    }
-    else {
-        return "Scissors";
-    }
+    return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function determineWinner(playerSelection, computerSelection) {
+    if (playerSelection === computerSelection) {
+        return "draw";
+    };
+
+    const winningCombinations = {
+        rock: "scissors",
+        paper: "rock",
+        scissors: "paper"
+    };
+
+    return winningCombinations[playerSelection] === computerSelection ? "player" : "computer";
 }
 
 function playRound(playerSelection) {
     const computerSelection = getComputerSelection();
 
     let roundResult = "";
-    
-    playerSelection = playerSelection.toLowerCase();
 
-    if (playerSelection == "rock" && computerSelection == "Scissors") {
-        roundResult = "You win! Rock beats Scissors";
-        playerScore++;
-    }
-    else if (playerSelection == "rock" && computerSelection == "Paper") {
-        roundResult = "You lose! Paper beats Rock";
-        computerScore++;
-    }
-    else if (playerSelection == "scissors" && computerSelection == "Paper") {
-        roundResult = "You win! Scissors beats Paper";
-        playerScore++;
+    const winner = determineWinner(playerSelection, computerSelection);
 
-    }
-    else if (playerSelection == "scissors" && computerSelection == "Rock") {
-        roundResult = "You lose! Rock beats Scissors";
-        computerScore++;
-    }
-    else if (playerSelection == "paper" && computerSelection == "Scissors") {
-        roundResult = "You lose! Scissors beats Paper";
-        computerScore++;
-    }
-    else if (playerSelection == "paper" && computerSelection == "Rock") {
-        roundResult = "You win! Paper beats Rock";
+    if (winner === "player") {
         playerScore++;
+        roundResult = `You win - ${playerSelection} beats ${computerSelection}!`;
+    }
+    else if (winner === "computer") {
+        computerScore++;
+        roundResult = `You lose - ${computerSelection} beats ${playerSelection}...`;
     }
     else {
-        roundResult = "You draw!"
-    }
+        roundResult = "It's a draw!"
+    };
     
-    if (currentRound === 5) {
-        document.getElementById('roundResult').textContent = playerScore > computerScore ? "You win the game!!! Rise against the machines!" : "Computer wins the game! Better luck next time!";
-        
-        currentRound = 0;
-        playerScore = 0;
-        computerScore = 0;
+    
+    currentRound ++;
+    updateTextContent(roundResult);
 
-        return;
+    if (currentRound === 5) {
+        document.getElementById('roundResult').textContent = playerScore > computerScore
+        ? "You win the game!!! Rise against the machines!" 
+        : "Computer wins the game! Better luck next time!";
+        
+        resetGame();
     }
-    
-    currentRound += 1;
+}
+
+function updateTextContent(roundResult) {
     document.getElementById('playerScore').textContent = playerScore;
     document.getElementById('computerScore').textContent = computerScore;
-    
     document.getElementById('currentRound').textContent = currentRound;
     document.getElementById('roundResult').textContent = roundResult;
+}
+
+function resetGame() {
+    currentRound = 0;
+    playerScore = 0;
+    computerScore = 0;
 }
